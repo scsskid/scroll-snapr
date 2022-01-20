@@ -7,15 +7,11 @@ function ScrollSnapr({ container, onSnap }) {
   this.items = Array.from(container.children);
   this.itemsCount = container.children.length;
 
-  this.bounding = container.getBoundingClientRect();
-  this.x = container.getBoundingClientRect().x;
-  this.width = container.getBoundingClientRect().width;
-
   this.createDots();
   this.createPrevNext();
 
   // this.addScrollListener();
-  this.updateIntersectingItems();
+  this.initIntersectionObserver();
   this.intersectingItems = [];
 }
 
@@ -55,42 +51,23 @@ ScrollSnapr.prototype = {
     this.container.after(prevNext);
   },
 
-  updateIntersectingItems: function () {
-    let callback = (entries, observer) => {
-      console.log(entries, observer);
-
+  initIntersectionObserver: function () {
+    const updateIntersectingItems = (entries, observer) => {
       entries.forEach((entry) => {
+        entry.slideIndex = this.items.indexOf(entry.target);
         if (entry.isIntersecting) {
-          this.intersectingItems.push(entry.target);
+          this.intersectingItems.push(entry);
         } else {
           this.intersectingItems = this.intersectingItems.filter(
-            (item) => item !== entry.target
+            (item) => item.target !== entry.target
           );
         }
       });
 
-      if (this.intersectingItems.length) {
-        console.log("length", this.intersectingItems.length);
-      }
-
-      // this.intersectingItems = entries.map((entry) => {
-      //   if (entry.isIntersecting) {
-      //     return {
-      //       item: entry.target,
-      //       intersectionRatio: entry.intersectionRatio,
-      //     };
-      //   }
-      // });
-
-      // console.log(this.intersectingItems);
-      // this.intersectingItems = entries.filter((item) => {
-      //   return item.isIntersecting && item.intersectionRatio === 1;
-      // });
-
-      console.log(this.intersectingItems);
+      console.table(this.intersectingItems);
     };
 
-    let observer = new IntersectionObserver(callback, {
+    const observer = new IntersectionObserver(updateIntersectingItems, {
       root: this.container,
       threshold: 1.0,
     });
@@ -99,13 +76,7 @@ ScrollSnapr.prototype = {
       observer.observe(item);
     }
 
-    document.querySelector("#logCurrentItem").addEventListener("click", () => {
-      console.log(this.getCurrentItem());
-    });
-
-    // for (const [i, item] of this.items.entries()) {}
-
-    return { todo: true };
+    return observer;
   },
 
   addScrollListener: function () {
