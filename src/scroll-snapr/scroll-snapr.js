@@ -114,15 +114,23 @@ ScrollSnapr.prototype = {
     console.log(this.container);
 
     prevButton.addEventListener("click", () => {
-      const prevItem = this.intersectingItems.find(
-        (item) => item.slideIndex === this.intersectingItems[0].slideIndex - 1
-      );
-      scrollTo(prevItem);
+      // Get the first intersecting item
+      const firstItem = this.intersectingItems[0];
+
+      console.log(firstItem);
+
+      // Get the previous item
+      const previousItem = this.items[firstItem.slideIndex - 1];
+
+      console.log(previousItem);
+
+      // Scroll to the previous item
+      if (previousItem) {
+        scrollTo(previousItem);
+      }
     });
 
     nextButton.addEventListener("click", () => {
-      // console.log(this.intersectingItems);
-
       // Get the last intersecting item
       const lastItem =
         this.intersectingItems[this.intersectingItems.length - 1];
@@ -133,6 +141,11 @@ ScrollSnapr.prototype = {
       const nextItem = this.items[lastItem.slideIndex + 1];
 
       console.log(nextItem);
+
+      // Scroll to the next item
+      if (nextItem) {
+        scrollTo(nextItem);
+      }
 
       // const nextItem = this.items.filter(
       //   (item) => item !== this.intersectingItems[0].target
