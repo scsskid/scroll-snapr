@@ -1,0 +1,25 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "./node_modules/prettier-stylelint/config.js"
+  ],
+  "rules": {
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "mixin",
+          "define-mixin",
+          "media",
+          "import",
+          "custom-selector",
+          "custom-media",
+          "font-face",
+          "import-sanitize"
+        ]
+      }
+    ],
+    "block-no-empty": null,
+    "no-duplicate-selectors": null
+  }
+}

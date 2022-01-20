@@ -1,0 +1,68 @@
+// Base
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: system-ui;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// Snapr
+
+.scroll-snapr {
+  overflow-y: scroll;
+  scroll-snap-type: x proximity;
+  display: flex;
+  box-shadow: 0 0 0 1px hsl(0 0% 0%);
+}
+
+.scroll-snapr > * {
+  scroll-snap-align: start;
+  display: inline-block;
+}
+
+.scroll-snapr__dots {
+  display: flex;
+}
+
+.scroll-snapr__dots > * {
+  margin-right: 1rem;
+}
+
+.scroll-snapr__dot {
+  box-shadow: inset 0 0 0 1px hsl(0 0% 0%);
+  padding: 0.1rem;
+}
+.scroll-snapr__dot--current {
+  box-shadow: inset 0 0 0 2px hsl(0 100% 50%);
+}
+
+.scroll-snapr__prev-next button {
+  cursor: pointer;
+}
+
+.scroll-snapr__prev svg {
+  transform: rotate(180deg);
+}
+
+// Visual Styling
+.scroll-snapr > * {
+  padding: 2rem;
+  min-width: 20rem;
+  background: lightyellow;
+
+  &:nth-child(2n) {
+    background: lightblue;
+  }
+}

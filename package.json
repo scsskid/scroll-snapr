@@ -1,0 +1,37 @@
+{
+  "name": "fem",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build:js": "node esbuilder.js",
+    "build:css": "node dart-sass.js",
+    "watch:js": "node esbuilder.js --watch",
+    "watch:css": "node dart-sass.js --watch",
+    "serve": "node browser-sync.js",
+    "dev": "npm run watch:js & npm run watch:css & npm run serve"
+  },
+  "dependencies": {
+    "browser-sync": "^2.27.7",
+    "chokidar": "^3.5.2",
+    "esbuild": "^0.14.1",
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb": "^19.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.5.0",
+    "prettier-stylelint": "^0.4.2",
+    "sass": "^1.44.0",
+    "smoothscroll-polyfill": "^0.4.4",
+    "stylelint": "^14.1.0",
+    "stylelint-config-standard": "^24.0.0",
+    "throttle-debounce": "^3.0.1"
+  },
+  "devDependencies": {
+    "esbuild-plugin-svg": "^0.1.0",
+    "lodash": "^4.17.21"
+  }
+}
