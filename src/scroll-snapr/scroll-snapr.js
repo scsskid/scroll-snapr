@@ -16,10 +16,12 @@ function ScrollSnapr({ container, onSnap }) {
 
   // this.addScrollListener();
   this.updateIntersectingItems();
-  this.intersectingItems = undefined;
+  this.intersectingItems = [];
 }
 
 ScrollSnapr.prototype = {
+  constructor: ScrollSnapr,
+
   createDots: function () {
     const dots = document.createElement("div");
     dots.classList.add("scroll-snapr__dots");
@@ -54,26 +56,44 @@ ScrollSnapr.prototype = {
   },
 
   updateIntersectingItems: function () {
-    let options = {
-      root: this.container,
-      threshold: 1.0,
-    };
-
     let callback = (entries, observer) => {
-      this.intersectingItems = entries.map((entry) => {
+      console.log(entries, observer);
+
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          return {
-            item: entry.target,
-            intersectionRatio: entry.intersectionRatio,
-          };
+          this.intersectingItems.push(entry.target);
+        } else {
+          this.intersectingItems = this.intersectingItems.filter(
+            (item) => item !== entry.target
+          );
         }
       });
 
+      if (this.intersectingItems.length) {
+        console.log("length", this.intersectingItems.length);
+      }
+
+      // this.intersectingItems = entries.map((entry) => {
+      //   if (entry.isIntersecting) {
+      //     return {
+      //       item: entry.target,
+      //       intersectionRatio: entry.intersectionRatio,
+      //     };
+      //   }
+      // });
+
+      // console.log(this.intersectingItems);
+      // this.intersectingItems = entries.filter((item) => {
+      //   return item.isIntersecting && item.intersectionRatio === 1;
+      // });
+
       console.log(this.intersectingItems);
-      // this.intersectingItems = entries.reduce((entry) => {
     };
 
-    let observer = new IntersectionObserver(callback, options);
+    let observer = new IntersectionObserver(callback, {
+      root: this.container,
+      threshold: 1.0,
+    });
 
     for (const item of this.items) {
       observer.observe(item);
