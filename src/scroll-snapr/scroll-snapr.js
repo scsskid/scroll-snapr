@@ -65,6 +65,15 @@ ScrollSnapr.prototype = {
       });
 
       console.table(this.intersectingItems);
+
+      document.querySelector("#logger").innerHTML = `
+        <p>
+          <strong>Intersecting items (${
+            this.intersectingItems.length
+          }):</strong>
+          ${this.intersectingItems.map((item) => item.slideIndex).join(", ")}
+        </p>
+      `;
     };
 
     const observer = new IntersectionObserver(updateIntersectingItems, {
