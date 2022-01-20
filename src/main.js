@@ -6,3 +6,5 @@ smoothscroll.polyfill();
 const scroller = new ScrollSnapr({
   container: document.querySelector(".scroll-snapr"),
 });
+
+scroller.init();
