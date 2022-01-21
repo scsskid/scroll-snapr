@@ -1,5 +1,10 @@
 // Base
 
+:root {
+  --max-width: 70rem;
+  --container-padding: 10rem;
+}
+
 *,
 *::after,
 *::before {
@@ -9,27 +14,40 @@
 html,
 body {
   height: 100%;
+  margin: 0;
 }
 
 body {
   font-family: system-ui;
-  max-width: 48rem;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.container {
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+  // max-width: var(--max-width);
 }
 
 // Snapr
 
 .scroll-snapr {
   overflow-y: scroll;
-  scroll-snap-type: x proximity;
-  display: flex;
-  box-shadow: 0 0 0 1px hsl(0 0% 0%);
+  scroll-snap-type: x mandatory;
+
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.scroll-snapr > * {
+.scroll-snapr-track {
+  display: flex;
+}
+
+.scroll-snapr-track > * {
   scroll-snap-align: start;
-  display: inline-block;
+  // display: inline-block;
+  flex: 0 0 50%;
 }
 
 .scroll-snapr__dots {
@@ -56,13 +74,50 @@ body {
   transform: rotate(180deg);
 }
 
+// Utils
+
+.full-width {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
 // Visual Styling
-.scroll-snapr > * {
-  padding: 2rem;
-  min-width: 20rem;
+
+.scroll-snapr {
+  // box-shadow: 0 0 0 1px hsl(0 0% 0%);
+  scroll-padding-left: var(--container-padding);
+  // padding-right: 200px;
+}
+
+.scroll-snapr-track {
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+.scroll-snapr-track > * {
+  display: inline-block;
+  // min-width: 20rem;
   background: lightyellow;
 
   &:nth-child(2n) {
     background: lightblue;
   }
+}
+
+.scroll-snapr-track > *:last-child::after {
+  width: var(--container-padding);
+  border: 1px solid transparent;
+  content: "";
+  display: block;
+  left: 100%;
+  position: relative;
+  top: -100%;
+}
+
+.slide-content {
+  padding: 2rem;
 }

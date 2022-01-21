@@ -2,15 +2,14 @@ import arrow from "./arrow.svg";
 // import { debounce } from "./helpers/throttle-debounce";
 import { debounce } from "lodash";
 
-function ScrollSnapr({ container, onSnap }) {
+function ScrollSnapr({ container, items }) {
   this.container = container;
   this.items = Array.from(container.children);
-  this.itemsCount = container.children.length;
+  this.visibleItems = [];
+  this.invisibleItems = [];
 
   this.createDots();
   this.createPrevNext();
-
-  this.intersectingItems = [];
 
   this.controls = {
     prev: "[data-scroll-snapr-prev]",
@@ -65,31 +64,32 @@ ScrollSnapr.prototype = {
   },
 
   initIntersectionObserver: function () {
-    const updateIntersectingItems = (entries, observer) => {
+    const handleIntersect = (entries) => {
+      // push
+      console.log(`handleIntersect`);
+
       entries.forEach((entry) => {
         entry.slideIndex = this.items.indexOf(entry.target);
         if (entry.isIntersecting) {
-          this.intersectingItems.push(entry);
+          this.visibleItems.push(entry);
         } else {
-          this.intersectingItems = this.intersectingItems.filter(
+          this.visibleItems = this.visibleItems.filter(
             (item) => item.target !== entry.target
           );
         }
       });
 
-      // console.table(this.intersectingItems);
+      // console.table(this.visibleItems);
 
       document.querySelector("#logger").innerHTML = `
         <p>
-          <strong>Intersecting items (${
-            this.intersectingItems.length
-          }):</strong>
-          ${this.intersectingItems.map((item) => item.slideIndex).join(", ")}
+          <strong>Visible items (${this.visibleItems.length}):</strong>
+          ${this.visibleItems.map((item) => item.slideIndex).join(", ")}
         </p>
       `;
     };
 
-    const observer = new IntersectionObserver(updateIntersectingItems, {
+    const observer = new IntersectionObserver(handleIntersect, {
       root: this.container,
       threshold: 1.0,
     });
@@ -98,82 +98,86 @@ ScrollSnapr.prototype = {
       observer.observe(item);
     }
 
-    return observer;
-  },
-
-  initScrollListener: function () {
-    const debouncedHandleScroll = debounce(this.handleScroll, 100);
-    console.log("initScrollListener");
-    this.container.addEventListener("scroll", debouncedHandleScroll);
+    return this.visibleItems;
   },
 
   initClickListener: function () {
     const prevButton = document.querySelector(this.controls.prev);
     const nextButton = document.querySelector(this.controls.next);
 
-    console.log(this.container);
+    const firstItem = this.visibleItems[0];
+    const lastItem = this.visibleItems[this.visibleItems.length - 1];
 
-    prevButton.addEventListener("click", () => {
-      // Get the first intersecting item
-      const firstItem = this.intersectingItems[0];
+    // const previousItem = this.items[firstItem.slideIndex - 1];
+    // const nextItem = this.items[lastItem.slideIndex + 1];
 
-      console.log(firstItem);
+    prevButton.addEventListener("click", () => {});
 
-      // Get the previous item
-      const previousItem = this.items[firstItem.slideIndex - 1];
+    nextButton.addEventListener("click", handleNextButtonClick.bind(this));
 
-      console.log(previousItem);
+    function handleNextButtonClick() {
+      console.dir(this.items);
+      console.log(this.visibleItems);
 
-      // Scroll to the previous item
-      if (previousItem) {
-        scrollTo(previousItem);
-      }
+      // get invisible Items
+
+      const invisibleitems = this.items.filter((item, i) => {
+        const itemIsVisible = typeof this.visibleItems[i] !== "undefined";
+
+        // console.log(`${i} is visible: ${itemIsVisible}`);
+        if (this.visibleItems[i] && item === this.visibleItems[i].target) {
+          console.log(item);
+          console.log(this.visibleItems[i].target);
+          console.log(`found ${i} in visibleItems`);
+          return false;
+        }
+
+        return true;
+      });
+
+      console.log(invisibleitems);
+    }
+
+    // Debugging
+    // -----------------------------------------------
+    // Log This visible button
+
+    document.querySelector("#logVisible").addEventListener("click", () => {
+      console.table(this.visibleItems);
     });
+  },
 
-    nextButton.addEventListener("click", () => {
-      // Get the last intersecting item
-      const lastItem =
-        this.intersectingItems[this.intersectingItems.length - 1];
-
-      console.log(lastItem);
-
-      // Get the next item
-      const nextItem = this.items[lastItem.slideIndex + 1];
-
-      console.log(nextItem);
-
-      // Scroll to the next item
-      if (nextItem) {
-        scrollTo(nextItem);
-      }
-
-      // const nextItem = this.items.filter(
-      //   (item) => item !== this.intersectingItems[0].target
-      // )[0];
-
-      // console.log(nextItem);
-
-      // const nextItem = this.intersectingItems.find(
-      //   (item) => item.slideIndex === this.intersectingItems[0].slideIndex + 1
-      // );
-      // scrollTo(nextItem);
-    });
-
-    // this.container.addEventListener("click", (e) => {
-    //   console.log("click", e);
-
-    //   const target = e.target;
-    //   const currentTarget = e.currentTarget;
-
-    //   console.log("target", target);
-    //   console.log("currentTarget", currentTarget);
-    //   console.dir(this);
-    // });
+  initScrollListener: function () {
+    const debouncedHandleScroll = debounce(this.handleScroll, 500);
+    this.container.addEventListener("scroll", debouncedHandleScroll.bind(this));
   },
 
   handleScroll: function () {
     // Update prev next target
-    console.log("scroll");
+    // console.log("scroll");
+
+    // auch push to array
+
+    this.invisibleItems = this.items.filter((item, i) => {
+      // console.log(this.visibleItems);
+      const itemIsVisible = typeof this.visibleItems[i] !== "undefined";
+
+      console.log(`${i} is visible: ${itemIsVisible}`);
+      // return !itemIsVisible;
+
+      if (this.visibleItems[i] && item === this.visibleItems[i].target) {
+        console.log(item);
+        console.log(this.visibleItems[i].target);
+        console.log(`found ${i} in visibleItems`);
+        return false;
+      }
+
+      return true;
+    });
+
+    console.log(this.items);
+    console.log(this.visibleItems);
+    console.log(this.invisibleItems);
   },
 };
 
