@@ -1,8 +1,27 @@
 // Base
 
 :root {
-  --max-width: 70rem;
-  --container-padding: 10rem;
+  // Todo: calc() container padding
+  --max-width: 10rem;
+  --container-padding: 2rem;
+}
+
+@media (min-width: 60em) {
+  :root {
+    --container-padding: 10rem;
+  }
+}
+
+@media (min-width: 80em) {
+  :root {
+    --container-padding: 20rem;
+  }
+}
+
+@media (min-width: 100em) {
+  :root {
+    --container-padding: 35rem;
+  }
 }
 
 *,
@@ -24,7 +43,6 @@ body {
 .container {
   padding-left: var(--container-padding);
   padding-right: var(--container-padding);
-  // max-width: var(--max-width);
 }
 
 // Snapr
@@ -40,14 +58,14 @@ body {
   }
 }
 
-.scroll-snapr-track {
+.scroll-snapr {
   display: flex;
+  // flex-direction: row;
 }
 
-.scroll-snapr-track > * {
+.scroll-snapr > * {
   scroll-snap-align: start;
-  // display: inline-block;
-  flex: 0 0 50%;
+  flex: 1 0 50%;
 }
 
 .scroll-snapr__dots {
@@ -93,12 +111,12 @@ body {
   // padding-right: 200px;
 }
 
-.scroll-snapr-track {
+.scroll-snapr {
   padding-left: var(--container-padding);
   padding-right: var(--container-padding);
 }
 
-.scroll-snapr-track > * {
+.scroll-snapr > * {
   display: inline-block;
   // min-width: 20rem;
   background: lightyellow;
@@ -108,7 +126,7 @@ body {
   }
 }
 
-.scroll-snapr-track > *:last-child::after {
+.scroll-snapr > *:last-child::after {
   width: var(--container-padding);
   border: 1px solid transparent;
   content: "";
