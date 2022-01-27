@@ -65,7 +65,7 @@ body {
 
 .scroll-snapr > * {
   scroll-snap-align: start;
-  flex: 1 0 50%;
+  flex: 1 0 calc(100% / 3);
 }
 
 .scroll-snapr__dots {
