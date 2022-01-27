@@ -9,9 +9,6 @@ function ScrollSnapr({ container, items }) {
   this.invisibleItems = [];
   this.observer = null;
 
-  this.createDots();
-  this.createPrevNext();
-
   this.controls = {
     prev: "[data-scroll-snapr-prev]",
     next: "[data-scroll-snapr-next]",
@@ -22,12 +19,11 @@ ScrollSnapr.prototype = {
   constructor: ScrollSnapr,
 
   init: function () {
-    window.onload = () => {
-      // this.initScrollListener();
-      this.addListeners();
-      this.createIntersectionObserver();
-      this.initClickListener();
-    };
+    this.createDots();
+    this.createPrevNext();
+    this.addListeners();
+    this.createIntersectionObserver();
+    this.initClickListener();
   },
 
   createDots: function () {
@@ -44,6 +40,12 @@ ScrollSnapr.prototype = {
 
     this.container.after(dots);
   },
+
+  /**
+   * Create Prev Next navigation
+   *
+   * @returns
+   */
 
   createPrevNext: function () {
     const prevNext = document.createElement("div");
@@ -65,52 +67,79 @@ ScrollSnapr.prototype = {
     this.container.after(prevNext);
   },
 
+  /**
+   * Create IntersectionObserver and observe Scroll container items
+   *
+   * @returns IntersectionObserver
+   */
+
   createIntersectionObserver: function () {
-    this.observer = new IntersectionObserver(handleIntersect.bind(this), {
+    const observer = new IntersectionObserver(this.handleIntersect.bind(this), {
       root: this.container,
       threshold: 0.99,
     });
 
     for (const item of this.items) {
-      this.observer.observe(item);
+      observer.observe(item);
     }
 
-    // Observer Handler
-    function handleIntersect(entries) {
-      entries.forEach((entry) => {
-        entry.slideIndex = this.items.indexOf(entry.target);
-        if (entry.isIntersecting) {
-          console.log(
-            `entry is intersecting:`,
-            entry.target,
-            entry.intersectionRatio
-          );
-          this.visibleItems.push(entry);
-        } else {
-          console.log(
-            `entry isnt intersecting anymore:`,
-            entry.target,
-            entry.intersectionRatio
-          );
-          this.visibleItems = this.visibleItems.filter(
-            (item) => item.target !== entry.target
-          );
-        }
-      });
+    this.observer = observer;
+    return observer;
+  },
 
-      // console.table(this.visibleItems);
+  /**
+   * handler for intersection observer
+   *
+   * @param {object} entries
+   */
 
-      document.querySelector("#logger").innerHTML = `
+  handleIntersect: function (entries) {
+    entries.forEach((entry) => {
+      entry.slideIndex = this.items.indexOf(entry.target);
+      if (entry.isIntersecting) {
+        console.log(
+          `entry is intersecting:`,
+          entry.target,
+          entry.intersectionRatio
+        );
+
+        this.invisibleItems = this.invisibleItems.filter(
+          (item) => item.target !== entry.target
+        );
+
+        this.visibleItems.push(entry);
+      } else {
+        console.log(
+          `entry isnt intersecting anymore:`,
+          entry.target,
+          entry.intersectionRatio
+        );
+
+        this.visibleItems = this.visibleItems.filter(
+          (item) => item.target !== entry.target
+        );
+
+        this.invisibleItems.push(entry);
+
+        // console.log(this.visibleItems);
+        // console.log(this.invisibleItems);
+      }
+
+      // console.log(this.visibleItems.indexOf(entry.target));
+    });
+
+    // console.table(this.visibleItems);
+
+    document.querySelector("#logger").innerHTML = `
         <p>
           <strong>Visible items (${this.visibleItems.length}):</strong>
           ${this.visibleItems.map((item) => item.slideIndex).join(", ")}
         </p>
+        <p>
+          <strong>Invisible items (${this.invisibleItems.length}):</strong>
+          ${this.invisibleItems.map((item) => item.slideIndex).join(", ")}
+        </p>
       `;
-    }
-
-    // Instanciate Observer
-
-    return this.observer;
   },
 
   initClickListener: function () {
@@ -170,13 +199,6 @@ ScrollSnapr.prototype = {
       // console.table(this.visibleItems);
     });
   },
-
-  // addListeners: function () {
-  //   // this.container.emitEvent(createIntersectingEvent({ detail: this.vis }));
-  //   this.container.addEventListener("scrollEnd", (e) => {
-  //     console.log();
-  //   });
-  // },
 
   handleScroll: function () {
     // Dispatch "scrollEnd"
