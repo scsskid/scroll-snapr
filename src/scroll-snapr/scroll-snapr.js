@@ -97,39 +97,24 @@ ScrollSnapr.prototype = {
     entries.forEach((entry) => {
       entry.slideIndex = this.items.indexOf(entry.target);
       if (entry.isIntersecting) {
-        console.log(
-          `entry is intersecting:`,
-          entry.target,
-          entry.intersectionRatio
-        );
-
         this.invisibleItems = this.invisibleItems.filter(
           (item) => item.target !== entry.target
         );
 
         this.visibleItems.push(entry);
       } else {
-        console.log(
-          `entry isnt intersecting anymore:`,
-          entry.target,
-          entry.intersectionRatio
-        );
-
         this.visibleItems = this.visibleItems.filter(
           (item) => item.target !== entry.target
         );
 
         this.invisibleItems.push(entry);
-
-        // console.log(this.visibleItems);
-        // console.log(this.invisibleItems);
       }
-
-      // console.log(this.visibleItems.indexOf(entry.target));
     });
 
-    // console.table(this.visibleItems);
+    this.logVisibilityToScreen();
+  },
 
+  logVisibilityToScreen() {
     document.querySelector("#logger").innerHTML = `
         <p>
           <strong>Visible items (${this.visibleItems.length}):</strong>
@@ -156,31 +141,8 @@ ScrollSnapr.prototype = {
 
     nextButton.addEventListener("click", handleNextButtonClick.bind(this));
 
-    function handleNextButtonClick() {
-      // console.dir(this.items);
-      // console.log(this.visibleItems);
+    function handleNextButtonClick() {}
 
-      // get invisible Items
-
-      const invisibleitems = this.items.filter((item, i) => {
-        const itemIsVisible = typeof this.visibleItems[i] !== "undefined";
-
-        // console.log(`${i} is visible: ${itemIsVisible}`);
-        if (this.visibleItems[i] && item === this.visibleItems[i].target) {
-          console.log(item);
-          console.log(this.visibleItems[i].target);
-          console.log(`found ${i} in visibleItems`);
-          return false;
-        }
-
-        return true;
-      });
-
-      // console.log(invisibleitems);
-    }
-
-    // Debugging
-    // -----------------------------------------------
     // Log This visible button
 
     document.querySelector("#logVisible").addEventListener("click", () => {
@@ -193,52 +155,9 @@ ScrollSnapr.prototype = {
       "scroll",
       debounce(this.handleScroll, 500).bind(this)
     );
-
-    this.container.addEventListener("scrollEnd", (e) => {
-      // console.log(`handle scrollEnd Event`, e);
-      // console.table(this.visibleItems);
-    });
   },
 
-  handleScroll: function () {
-    // Dispatch "scrollEnd"
-
-    const scrollEndEvent = new CustomEvent("scrollEnd", {
-      visibleItems: this.visibleItems,
-    });
-
-    this.container.dispatchEvent(scrollEndEvent);
-  },
-
-  OFFhandleScroll: function () {
-    // Update prev next target
-    // console.log("scroll");
-
-    // auch push to array
-
-    console.log("scroll");
-
-    this.invisibleItems = this.items.filter((item, i) => {
-      // console.log(this.visibleItems);
-      const itemIsVisible = typeof this.visibleItems[i] !== "undefined";
-
-      // console.log(`${i} is visible: ${itemIsVisible}`);
-      // return !itemIsVisible;
-
-      if (this.visibleItems[i] && item === this.visibleItems[i].target) {
-        // console.log(item);
-        // console.log(this.visibleItems[i].target);
-        // console.log(`found ${i} in visibleItems`);
-        return false;
-      }
-
-      return true;
-    });
-
-    // console.log(this.items);
-    // console.log(this.visibleItems);
-    // console.log(this.invisibleItems);
-  },
+  handleScroll: function () {},
 };
 
 function scrollTo(el) {
@@ -246,14 +165,6 @@ function scrollTo(el) {
     behavior: "smooth",
     // block: "start",
   });
-}
-
-function createIntersectingEvent({ detail }) {
-  const intersectEvent = new CustomEvent("intersecting", {
-    detail,
-  });
-
-  return intersectEvent;
 }
 
 export default ScrollSnapr;
